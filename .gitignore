@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Editor
+.vscode/
+
+# Official challenge data, candidate dumps, and training caches.
+# These are large, regenerable, or not redistributable.
+/data/
+/submission/
+/submission_archive*/
+/results/
+/logs/
+/.remote_sync/
+/workspace/
+/external_refs/
+/public discussion/
+/results_gpu_remotedualhead/
+
+# Archives and bulky artifacts
+*.tar
+*.tgz
+*.zip
+*.parquet
+*.npy
+*.npz
+*.nc
+*.part
+*.cbm
+*.bak
+*.log
+
+# Prediction CSVs. The review package keeps only the blend inputs
+# and the selected submission.
+*.csv
+!review/zindi_code_review/sources/*.csv
+!review/zindi_code_review/expected/*.csv
+!review/zindi_code_review/output/submission_onlineleader_idw_era5_lgbmaligned_extra_seed123_raw_w025.csv

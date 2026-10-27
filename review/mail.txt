@@ -1,0 +1,16 @@
+Dear jinneng,
+
+Congratulations! You are top 30 on the private leaderboard of the A Step Ahead of Drought: Forecasting Global Water Storage Challenge! Great job!
+
+In order to confirm your final position on the leaderboard, we need to independently verify that your code produces the same value as your submission. Once the code and documentation are reviewed, we will be in touch on the next steps to announce the winners and award your prize money if you’re in the top three of a prized challenge.
+Please note: If you do not submit correct code and adequate documentation based on the below guidelines, your solution will be disqualified.
+
+Please upload your solution to THIS LINK before 17:00 GMT 25 September 2026.
+
+Best submission info:
+ID: KJhqz4jM
+Before your submission, please read THIS ARTICLE on what to include in your documentation. If you do not follow these guidelines or fail to submit documentation with your solution, your submission will be disqualified.
+Here is an ARTICLE that highlights some ideas on how to write good code.
+
+We look forward to hearing from you!
+The Zindi team

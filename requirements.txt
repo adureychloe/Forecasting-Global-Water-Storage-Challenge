@@ -1,0 +1,12 @@
+# GPU training environment (Vast.ai RTX 4090, Python 3.12).
+# Install GPU-enabled CatBoost / LightGBM / XGBoost builds.
+numpy>=1.26
+pandas>=2.2
+pyarrow>=15.0
+catboost>=1.2
+lightgbm>=4.3
+xgboost>=2.0
+scikit-learn>=1.4
+xarray>=2024.1
+netCDF4>=1.6
+cdsapi>=0.7
