@@ -1,8 +1,7 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $root = Split-Path $PSScriptRoot -Parent
 $pkg = Join-Path $PSScriptRoot "zindi_code_review"
-$sub = Join-Path $root "submission"
-$staging = Join-Path $PSScriptRoot "_zip_staging"
+$staging = Join-Path $PSScriptRoot ("_zip_staging/" + [guid]::NewGuid().ToString("N"))
 $zip = Join-Path $PSScriptRoot "zindi_code_review.zip"
 
 $sources = @(
@@ -35,33 +34,36 @@ $code = @(
     "baseline.py"
 )
 
-if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
-New-Item -ItemType Directory -Path (Join-Path $staging "zindi_code_review\sources") | Out-Null
-New-Item -ItemType Directory -Path (Join-Path $staging "zindi_code_review\expected") | Out-Null
-New-Item -ItemType Directory -Path (Join-Path $staging "zindi_code_review\code") | Out-Null
-
-Copy-Item (Join-Path $pkg "README.md") (Join-Path $staging "zindi_code_review\")
-Copy-Item (Join-Path $pkg "DOCUMENTATION.md") (Join-Path $staging "zindi_code_review\")
-Copy-Item (Join-Path $pkg "TRAIN.md") (Join-Path $staging "zindi_code_review\")
-Copy-Item (Join-Path $pkg "requirements.txt") (Join-Path $staging "zindi_code_review\")
-Copy-Item (Join-Path $pkg "reproduce.py") (Join-Path $staging "zindi_code_review\")
-
-foreach ($name in $sources) {
-    $src = Join-Path $sub $name
-    if (-not (Test-Path $src)) { throw "missing $src" }
-    Copy-Item $src (Join-Path $staging "zindi_code_review\sources\$name")
+# Stage only files owned by this invocation; bundled predictions work on a fresh clone.
+$staging = [IO.Path]::GetFullPath($staging)
+$allowedStaging = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot "_zip_staging")) + [IO.Path]::DirectorySeparatorChar
+if (-not $staging.StartsWith($allowedStaging, [StringComparison]::OrdinalIgnoreCase)) {
+    throw "staging path must stay inside review/_zip_staging"
 }
-$win = "submission_onlineleader_idw_era5_lgbmaligned_extra_seed123_raw_w025.csv"
-Copy-Item (Join-Path $sub $win) (Join-Path $staging "zindi_code_review\expected\$win")
-Copy-Item (Join-Path $sub $win) (Join-Path $staging "zindi_code_review\sources\$win")
-
-foreach ($name in $code) {
-    $src = Join-Path $root $name
-    if (-not (Test-Path $src)) { throw "missing $src" }
-    Copy-Item $src (Join-Path $staging "zindi_code_review\code\$name")
+$packageRoot = Join-Path $staging "zindi_code_review"
+try {
+    foreach ($folder in @("sources", "expected", "scripts")) {
+        New-Item -ItemType Directory -Path (Join-Path $packageRoot $folder) -Force | Out-Null
+    }
+    foreach ($name in @("README.md", "DOCUMENTATION.md", "TRAIN.md", "requirements.txt", "reproduce.py")) {
+        Copy-Item -LiteralPath (Join-Path $pkg $name) -Destination $packageRoot
+    }
+    foreach ($name in $sources) {
+        $src = Join-Path (Join-Path $pkg "sources") $name
+        if (-not (Test-Path -LiteralPath $src)) { throw "missing $src" }
+        Copy-Item -LiteralPath $src -Destination (Join-Path $packageRoot "sources/$name")
+    }
+    $win = "submission_onlineleader_idw_era5_lgbmaligned_extra_seed123_raw_w025.csv"
+    Copy-Item -LiteralPath (Join-Path $pkg "expected/$win") -Destination (Join-Path $packageRoot "expected/$win")
+    foreach ($name in $code) {
+        $src = Join-Path (Join-Path $root "scripts") $name
+        if (-not (Test-Path -LiteralPath $src)) { throw "missing $src" }
+        Copy-Item -LiteralPath $src -Destination (Join-Path $packageRoot "scripts/$name")
+    }
+    Compress-Archive -LiteralPath $packageRoot -DestinationPath $zip -Force
+} finally {
+    if (Test-Path -LiteralPath $staging) {
+        Remove-Item -LiteralPath $staging -Recurse -Force
+    }
 }
-
-if (Test-Path $zip) { Remove-Item $zip -Force }
-Compress-Archive -Path (Join-Path $staging "zindi_code_review") -DestinationPath $zip -Force
-Remove-Item $staging -Recurse -Force
-Get-Item $zip | Select-Object FullName, Length
+Get-Item -LiteralPath $zip | Select-Object FullName, Length

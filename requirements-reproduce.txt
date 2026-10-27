@@ -1,0 +1,4 @@
+# CPU-only reconstruction of the selected CSV from saved predictions.
+# Match the environment that serialized the archived reference CSV.
+numpy==1.26.4
+pandas==2.2.2

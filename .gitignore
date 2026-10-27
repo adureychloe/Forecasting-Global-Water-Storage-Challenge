@@ -39,4 +39,12 @@ venv/
 *.csv
 !review/zindi_code_review/sources/*.csv
 !review/zindi_code_review/expected/*.csv
-!review/zindi_code_review/output/submission_onlineleader_idw_era5_lgbmaligned_extra_seed123_raw_w025.csv
+
+# Reproduction and review packaging outputs are generated locally.
+/review/zindi_code_review/output/
+/review/_zip_staging/
+
+# Local credentials
+.env
+.env.*
+.cdsapirc
